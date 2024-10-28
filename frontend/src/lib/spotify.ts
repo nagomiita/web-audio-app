@@ -1,3 +1,4 @@
+import { SpotifyResponse } from "@/types/SpotifyResponse";
 import axios from "axios";
 
 class SpotifyClient {
@@ -16,12 +17,19 @@ class SpotifyClient {
     spotify.token = response.data.access_token;
     return spotify;
   }
-  async getPopularSongs() {
+  async getPopularSongs(): Promise<SpotifyResponse> {
     const response = await axios.get(
       "https://api.spotify.com/v1/playlists/37i9dQZEVXbKqiTGXuCOsB/tracks",
       { headers: { Authorization: `Bearer ${this.token}` } }
     );
     return response.data;
+  }
+  async searchSongs(keyword: string, limit: number, offset: number) {
+    const response = await axios.get("https://api.spotify.com/v1/search", {
+      headers: { Authorization: `Bearer ${this.token}` },
+      params: { q: keyword, type: "track", limit, offset },
+    });
+    return response.data.tracks;
   }
 }
 
